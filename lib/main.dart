@@ -19,6 +19,18 @@ class _HomeState extends State<Home> {
   final _toDoController = TextEditingController();
   List _toDoList = [];
 
+  /*SALVANDO OS DADOS*/
+  @override
+  void initState() {
+    super.initState();
+    _readData().then((data) {
+      setState(() {
+        _toDoList = json.decode(data);
+      });
+    });
+  }
+  /**********************/
+
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = Map();
@@ -26,6 +38,7 @@ class _HomeState extends State<Home> {
       _toDoController.text = "";
       newToDo["ok"] = false;
       _toDoList.add(newToDo);
+      _saveData();
     });
   }
 
@@ -71,9 +84,10 @@ class _HomeState extends State<Home> {
                         child: Icon(
                             _toDoList[index]["ok"] ? Icons.check : Icons.error),
                       ),
-                      onChanged: (c){
+                      onChanged: (c) {
                         setState(() {
                           _toDoList[index]["ok"] = c;
+                          _saveData();
                         });
                       },
                     );
@@ -83,6 +97,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+  /*RECUPERAR, SALVAR E LER OS ARQUIVOS*/
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File("${directory.path}/data.json");
@@ -102,4 +117,5 @@ class _HomeState extends State<Home> {
       return null;
     }
   }
+  /**************************************/
 }
